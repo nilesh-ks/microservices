@@ -24,6 +24,9 @@ CODE_BG = (244, 245, 247)
 CODE_INK = (40, 44, 52)
 TABLE_HEAD_BG = (231, 233, 236)
 TABLE_ROW_BG = (249, 250, 251)
+LINK_INK = (30, 90, 200)
+
+LINK_RE = re.compile(r"^\[([^\]]+)\]\(([^)]+)\)$")
 
 
 class PDF(FPDF):
@@ -42,6 +45,19 @@ def strip_inline(text: str) -> str:
     """Drop backticks (inline code) so text reads cleanly; keep bold markers."""
     text = text.replace("`", "")
     return text
+
+
+def cell_display(text: str) -> str:
+    """Visible text of a table cell for width/height measurement.
+
+    Converts a whole-cell markdown link [label](url) to just `label`, and
+    strips backticks/bold markers so a long URL never widens a column.
+    """
+    text = text.strip()
+    m = LINK_RE.match(text)
+    if m:
+        text = m.group(1)
+    return strip_inline(text).replace("**", "")
 
 
 def main():
@@ -173,10 +189,11 @@ def render_list_item(pdf, text, marker, epw):
     pdf.set_font("DejaVu", "", 9.5)
     pdf.set_text_color(*INK)
     x0 = pdf.l_margin
+    indent = 9            # room for two-digit markers like "13."
     pdf.set_x(x0 + 2)
-    pdf.cell(5, 5, marker)
-    pdf.set_x(x0 + 7)
-    pdf.multi_cell(epw - 7, 5, text, markdown=True)
+    pdf.cell(indent - 2, 5, marker)
+    pdf.set_x(x0 + indent)
+    pdf.multi_cell(epw - indent, 5, text, markdown=True)
     pdf.ln(0.5)
 
 
@@ -277,18 +294,27 @@ def render_table(pdf, tbl_lines, epw):
 def compute_widths(pdf, header, body, epw):
     ncols = len(header)
     pdf.set_font("DejaVu", "", 8.5)
-    maxw = [0] * ncols
-    for row in [header] + body:
+    pad2 = 2 * 1.4 + 0.8                     # cell padding + a hair of slack
+    content = [0.0] * ncols                 # widest full cell (ideal width)
+    floor = [0.0] * ncols                   # widest single word (never wrap mid-word)
+    for ri, row in enumerate([header] + body):
         row = (row + [""] * ncols)[:ncols]
+        pdf.set_font("DejaVu", "B" if ri == 0 else "", 8.5)  # header is bold (wider)
         for c in range(ncols):
-            w = pdf.get_string_width(strip_inline(row[c]))
-            maxw[c] = max(maxw[c], w)
-    total = sum(maxw) or 1
-    # scale to fit, with a minimum
-    raw = [max(14, m / total * epw) for m in maxw]
-    s = sum(raw)
-    widths = [w / s * epw for w in raw]
-    return widths
+            disp = cell_display(row[c])
+            content[c] = max(content[c], pdf.get_string_width(disp) + pad2)
+            for word in disp.split():
+                floor[c] = max(floor[c], pdf.get_string_width(word) + pad2)
+
+    # Start at the per-column floor; hand the leftover space out in proportion
+    # to how much each column actually wants (content beyond its floor).
+    base = sum(floor)
+    if base >= epw:                          # pathological: scale floors to fit
+        return [f / base * epw for f in floor]
+    extra = epw - base
+    want = [max(0.0, content[c] - floor[c]) for c in range(ncols)]
+    twant = sum(want) or 1.0
+    return [floor[c] + extra * want[c] / twant for c in range(ncols)]
 
 
 def draw_row(pdf, cells, widths, bold, fill, size):
@@ -298,8 +324,7 @@ def draw_row(pdf, cells, widths, bold, fill, size):
     # measure wrapped height per cell
     heights = []
     for i, txt in enumerate(cells):
-        txt = strip_inline(txt)
-        nlines = count_wrapped_lines(pdf, txt, widths[i] - 2 * pad)
+        nlines = count_wrapped_lines(pdf, cell_display(txt), widths[i] - 2 * pad)
         heights.append(nlines * line_h + 2 * pad)
     row_h = max(heights) if heights else line_h + 2 * pad
 
@@ -313,13 +338,21 @@ def draw_row(pdf, cells, widths, bold, fill, size):
     pdf.set_draw_color(*RULE)
     pdf.set_line_width(0.15)
     for i, txt in enumerate(cells):
-        txt = strip_inline(txt)
         pdf.set_fill_color(*fill)
         pdf.rect(x, y0, widths[i], row_h, style="F")
         pdf.rect(x, y0, widths[i], row_h, style="D")
         pdf.set_xy(x + pad, y0 + pad)
-        pdf.set_text_color(*INK)
-        pdf.multi_cell(widths[i] - 2 * pad, line_h, txt, markdown=True, align="L")
+        m = LINK_RE.match(txt.strip())
+        if m:                                   # clickable LeetCode link cell
+            pdf.set_text_color(*LINK_INK)
+            pdf.set_font("DejaVu", "U", size)
+            pdf.multi_cell(widths[i] - 2 * pad, line_h, m.group(1),
+                           align="L", link=m.group(2))
+            pdf.set_font("DejaVu", "B" if bold else "", size)
+        else:
+            pdf.set_text_color(*INK)
+            pdf.multi_cell(widths[i] - 2 * pad, line_h, strip_inline(txt),
+                           markdown=True, align="L")
         x += widths[i]
     pdf.set_y(y0 + row_h)
 

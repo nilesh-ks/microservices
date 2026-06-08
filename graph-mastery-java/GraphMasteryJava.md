@@ -14,7 +14,7 @@ This sheet collapses graph into 9 patterns: DFS, BFS, Topological Sort, Union-Fi
 
 **This edition is Java-first.** Every code block is idiomatic Java, and every language-specific note (recursion depth, heaps, hash maps, overflow) is written for the JVM — not Python. Where the original said `sys.setrecursionlimit`, this one tells you how Java's call stack behaves and what to do instead.
 
-**How to use:** Crash course → 5 min. Decision tree → internalise it. Patterns 1-9 in order — each has a warm-up, walkthrough(s), traps, and curated practice. Cross-pattern traps → read once before any interview. Revision drill → 20 minutes the night before.
+**How to use:** Crash course → 5 min. Decision tree → internalize it. Patterns 1-9 in order — each has a warm-up, walkthrough(s), traps, and curated practice. Cross-pattern traps → read once before any interview. Revision drill → 20 minutes the night before.
 
 ### Inside this sheet
 
@@ -98,7 +98,7 @@ Deque<int[]> stack = new ArrayDeque<>();
 stack.push(new int[]{startR, startC});
 while (!stack.isEmpty()) {
     int[] cell = stack.pop();
-    // ... visit, push unvisited neighbours
+    // ... visit, push unvisited neighbors
 }
 
 // Option B — run recursive DFS on a thread with a large stack (e.g. 64 MB)
@@ -117,7 +117,7 @@ t.join();
 
 ### Mental model
 
-DFS is recursion with a visited set. Visit a node, mark it, recurse into every unvisited neighbour, return. That single skeleton solves connectivity, components, flood fill, path existence, cycle detection (directed: via the recursion stack), and post-order topological sort.
+DFS is recursion with a visited set. Visit a node, mark it, recurse into every unvisited neighbor, return. That single skeleton solves connectivity, components, flood fill, path existence, cycle detection (directed: via the recursion stack), and post-order topological sort.
 
 **Invariant:** Once `dfs(u)` returns, every node reachable from `u` has been visited and marked. Re-entering a visited node is a no-op.
 
@@ -127,8 +127,8 @@ DFS is recursion with a visited set. Visit a node, mark it, recurse into every u
 
 - "Reach all nodes from X" / "is there a path from A to B?"
 - "Count connected components" / "number of provinces / islands"
-- "Flood fill" / "colour a region" / "surround captured regions"
-- "Cycle in a DIRECTED graph" (use the recursion-stack / 3-colour flag, NOT just visited).
+- "Flood fill" / "color a region" / "surround captured regions"
+- "Cycle in a DIRECTED graph" (use the recursion-stack / 3-color flag, NOT just visited).
 - "All paths from source to target" — DFS with backtracking emits each path.
 
 ### Walkthrough — LC 200 Number of Islands (DFS flood fill)
@@ -160,7 +160,7 @@ private void dfs(char[][] grid, int r, int c, int R, int C) {
 }
 ```
 
-### Walkthrough — cycle in a DIRECTED graph (DFS 3-colour)
+### Walkthrough — cycle in a DIRECTED graph (DFS 3-color)
 
 WHITE = unvisited, GRAY = on the current DFS path, BLACK = finished. A back-edge to a GRAY node is a cycle.
 
@@ -188,27 +188,27 @@ private boolean dfs(int u, List<List<Integer>> graph, int[] color) {
 ### Common traps
 
 - **Marking visited AFTER recursing instead of BEFORE.** The same node gets pushed many times — exponential blowup. Mark `grid[r][c] = '#'` (or `visited[u] = true`) *before* you recurse.
-- **Using a single `boolean[] visited` for cycle detection in a DIRECTED graph.** `visited[v] = true` can't tell "seen in a different DFS" from "on my current path." Use 3-colour or an `onStack[]` flag.
+- **Using a single `boolean[] visited` for cycle detection in a DIRECTED graph.** `visited[v] = true` can't tell "seen in a different DFS" from "on my current path." Use 3-color or an `onStack[]` flag.
 - **Stack depth.** Java has no `setrecursionlimit`; deep graphs throw `StackOverflowError`. Go iterative or use a big-stack thread.
 - **Mutating the grid for visited tracking when the problem says "do not modify input."** Use a separate `boolean[][] visited` instead.
 
 ### Warm-up first — build the mechanics
 
-Solve this cold before LC 200. LC 733 is the simplest flood-fill: one starting cell, one colour, no counting. It locks the "bounds check + visited mark + recurse 4 directions" rhythm before you add the component-counting loop.
+Solve this cold before LC 200. LC 733 is the simplest flood-fill: one starting cell, one color, no counting. It locks the "bounds check + visited mark + recurse 4 directions" rhythm before you add the component-counting loop.
 
-| # | Problem | Difficulty |
-|---|---|---|
-| 733 | Flood Fill — single-source DFS recoloring; the simplest grid-DFS problem | Easy |
+| # | Problem | Difficulty | Link |
+|---|---|---|---|
+| 733 | Flood Fill — single-source DFS recoloring; the simplest grid-DFS problem | Easy | [LeetCode](https://leetcode.com/problems/flood-fill/) |
 
 ### Practice (solve in this order — each unlocks the next)
 
-| Step | # | Problem | Difficulty |
-|---|---|---|---|
-| 1 | 200 | Number of Islands — the canonical DFS / flood fill; bar-raiser foundation | Medium |
-| 2 | 695 | Max Area of Island — DFS returning a size; trivial extension of LC 200 | Medium |
-| 3 | 841 | Keys and Rooms — DFS reachability on an adjacency list; simplest non-grid DFS | Medium |
-| 4 | 130 | Surrounded Regions — reverse-flood-fill from the border; "mark survivors first" | Medium |
-| 5 | 133 | Clone Graph — DFS with a node→copy `HashMap`; canonical "deep-copy a graph" | Medium |
+| Step | # | Problem | Difficulty | Link |
+|---|---|---|---|---|
+| 1 | 200 | Number of Islands — the canonical DFS / flood fill; bar-raiser foundation | Medium | [LeetCode](https://leetcode.com/problems/number-of-islands/) |
+| 2 | 695 | Max Area of Island — DFS returning a size; trivial extension of LC 200 | Medium | [LeetCode](https://leetcode.com/problems/max-area-of-island/) |
+| 3 | 841 | Keys and Rooms — DFS reachability on an adjacency list; simplest non-grid DFS | Medium | [LeetCode](https://leetcode.com/problems/keys-and-rooms/) |
+| 4 | 130 | Surrounded Regions — reverse-flood-fill from the border; "mark survivors first" | Medium | [LeetCode](https://leetcode.com/problems/surrounded-regions/) |
+| 5 | 133 | Clone Graph — DFS with a node→copy `HashMap`; canonical "deep-copy a graph" | Medium | [LeetCode](https://leetcode.com/problems/clone-graph/) |
 
 ---
 
@@ -228,7 +228,7 @@ BFS is DFS's level-by-level cousin. Mark visited when you ENQUEUE (not when you 
 
 - "Shortest path in an UNWEIGHTED graph" / "minimum steps / moves to reach"
 - "Level order traversal" (a tree is just a graph with no cycles)
-- "Word Ladder" / "generate-all-1-edit-neighbours"
+- "Word Ladder" / "generate-all-1-edit-neighbors"
 - "Rotting oranges" / "01 matrix" / "walls and gates" — multi-source BFS giveaway.
 - "Shortest bridge between two islands" (BFS from the entire boundary of one island).
 
@@ -270,24 +270,24 @@ public int orangesRotting(int[][] grid) {
 - **Marking visited on DEQUEUE.** The same node gets enqueued many times before processing — quadratic blowup. Mark on ENQUEUE.
 - **Using BFS for shortest path on a WEIGHTED graph.** BFS only works for unweighted (or 0/1 edge weights — 0-1 BFS with a deque). For arbitrary weights use Dijkstra (Pattern 5).
 - **Forgetting to track level/distance.** If you need the shortest distance, store `int[]{node, dist}` or process the queue level-by-level (`int sz = q.size(); for (int i = 0; i < sz; i++) ...`).
-- **Word Ladder: building the full adjacency list (O(N²) words).** Build a bucket-keyed neighbour map (`"h*t" -> [hot, hit, hat]`) with a `HashMap<String,List<String>>` for O(N·L) generation instead.
+- **Word Ladder: building the full adjacency list (O(N²) words).** Build a bucket-keyed neighbor map (`"h*t" -> [hot, hit, hat]`) with a `HashMap<String,List<String>>` for O(N·L) generation instead.
 
 ### Warm-up first — build the mechanics
 
 Solve this cold before LC 994. LC 1971 is the simplest BFS / DFS connectivity check — one source, one sink, yes/no. It locks the queue-marker-loop rhythm without grid coordinates and time tracking on top.
 
-| # | Problem | Difficulty |
-|---|---|---|
-| 1971 | Find if Path Exists in Graph — single-source reachability BFS; simplest BFS template | Easy |
+| # | Problem | Difficulty | Link |
+|---|---|---|---|
+| 1971 | Find if Path Exists in Graph — single-source reachability BFS; simplest BFS template | Easy | [LeetCode](https://leetcode.com/problems/find-if-path-exists-in-graph/) |
 
 ### Practice (solve in this order — each unlocks the next)
 
-| Step | # | Problem | Difficulty |
-|---|---|---|---|
-| 1 | 994 | Rotting Oranges — the canonical multi-source BFS; bar-raiser pattern | Medium |
-| 2 | 102 | Binary Tree Level Order Traversal — BFS on a tree; the level-by-level skeleton | Medium |
-| 3 | 127 | Word Ladder — BFS with on-the-fly neighbour generation via bucket map | Hard |
-| 4 | 542 | 01 Matrix — multi-source BFS from all 0s outward; elegant alternative to 2-pass DP | Medium |
+| Step | # | Problem | Difficulty | Link |
+|---|---|---|---|---|
+| 1 | 994 | Rotting Oranges — the canonical multi-source BFS; bar-raiser pattern | Medium | [LeetCode](https://leetcode.com/problems/rotting-oranges/) |
+| 2 | 102 | Binary Tree Level Order Traversal — BFS on a tree; the level-by-level skeleton | Medium | [LeetCode](https://leetcode.com/problems/binary-tree-level-order-traversal/) |
+| 3 | 127 | Word Ladder — BFS with on-the-fly neighbor generation via bucket map | Hard | [LeetCode](https://leetcode.com/problems/word-ladder/) |
+| 4 | 542 | 01 Matrix — multi-source BFS from all 0s outward; elegant alternative to 2-pass DP | Medium | [LeetCode](https://leetcode.com/problems/01-matrix/) |
 
 ---
 
@@ -299,9 +299,9 @@ Solve this cold before LC 994. LC 1971 is the simplest BFS / DFS connectivity ch
 
 Topo sort is the canonical "dependency resolution" pattern — build order, course schedule, package install order, task dependencies.
 
-**Kahn's BFS:** Compute the in-degree of every node. Enqueue all in-degree-0 nodes. Pop one, append to output, decrement each neighbour's in-degree, enqueue any that hit 0. If output length < V at the end → the graph has a cycle.
+**Kahn's BFS:** Compute the in-degree of every node. Enqueue all in-degree-0 nodes. Pop one, append to output, decrement each neighbor's in-degree, enqueue any that hit 0. If output length < V at the end → the graph has a cycle.
 
-**DFS variant:** Run DFS; when `dfs(u)` FINISHES (post-order), push `u` onto a stack. Reverse the stack at the end. Cycle detection needs the 3-colour trick from Pattern 1.
+**DFS variant:** Run DFS; when `dfs(u)` FINISHES (post-order), push `u` onto a stack. Reverse the stack at the end. Cycle detection needs the 3-color trick from Pattern 1.
 
 **Invariant (Kahn):** At every step the queue contains exactly the nodes whose dependencies have all been emitted.
 
@@ -314,7 +314,7 @@ Topo sort is the canonical "dependency resolution" pattern — build order, cour
 
 ### Walkthrough — LC 210 Course Schedule II (Kahn's BFS)
 
-Build the graph + in-degree, BFS from in-degree-0 nodes, emit each and decrement neighbours. If the final order length < numCourses, there's a cycle → return an empty array.
+Build the graph + in-degree, BFS from in-degree-0 nodes, emit each and decrement neighbors. If the final order length < numCourses, there's a cycle → return an empty array.
 
 ```java
 public int[] findOrder(int numCourses, int[][] prerequisites) {
@@ -344,7 +344,7 @@ public int[] findOrder(int numCourses, int[][] prerequisites) {
 
 - **Building the graph in the wrong direction.** `[course, prereq]` means `prereq → course` — NOT `course → prereq`. Reading it backwards inverts the whole algorithm.
 - **Forgetting cycle detection.** If `idx < numCourses` at the end of Kahn's, the graph has a cycle. Return `new int[0]` (or whatever the problem requires).
-- **Using DFS without the 3-colour trick.** A plain `boolean[] visited` can't tell a back-edge from a cross-edge — you'll miss cycles in DAGs that share dependencies.
+- **Using DFS without the 3-color trick.** A plain `boolean[] visited` can't tell a back-edge from a cross-edge — you'll miss cycles in DAGs that share dependencies.
 - **Alien Dictionary edge case:** equal prefixes where the longer word comes first (`"abc"`, `"ab"`) is invalid — return `""` immediately.
 
 ### Warm-up note
@@ -353,12 +353,12 @@ Topo sort has no truly Easy LeetCode warm-up — every problem assumes the DAG f
 
 ### Practice (solve in this order — each unlocks the next)
 
-| Step | # | Problem | Difficulty |
-|---|---|---|---|
-| 1 | 207 | Course Schedule — the cycle-detection version (yes/no); the warm-up for 210 | Medium |
-| 2 | 210 | Course Schedule II — return the actual order; canonical Kahn's BFS template | Medium |
-| 3 | 802 | Find Eventual Safe States — reverse-graph topo sort; nodes whose all paths terminate | Medium |
-| 4 | 310 | Minimum Height Trees — trim leaves Kahn-style until ≤ 2 centroids remain | Medium |
+| Step | # | Problem | Difficulty | Link |
+|---|---|---|---|---|
+| 1 | 207 | Course Schedule — the cycle-detection version (yes/no); the warm-up for 210 | Medium | [LeetCode](https://leetcode.com/problems/course-schedule/) |
+| 2 | 210 | Course Schedule II — return the actual order; canonical Kahn's BFS template | Medium | [LeetCode](https://leetcode.com/problems/course-schedule-ii/) |
+| 3 | 802 | Find Eventual Safe States — reverse-graph topo sort; nodes whose all paths terminate | Medium | [LeetCode](https://leetcode.com/problems/find-eventual-safe-states/) |
+| 4 | 310 | Minimum Height Trees — trim leaves Kahn-style until ≤ 2 centroids remain | Medium | [LeetCode](https://leetcode.com/problems/minimum-height-trees/) |
 
 ---
 
@@ -372,7 +372,7 @@ DSU is the right tool whenever you're streaming "merge these two groups" / "are 
 
 **Path compression:** During `find`, point every node on the path directly to the root. Future finds are O(1).
 
-**Union by rank:** Attach the shorter tree under the taller one's root. Keeps trees shallow. Combined with compression, amortised cost is α(n) (inverse Ackermann) — essentially constant for any n you'd ever see.
+**Union by rank:** Attach the shorter tree under the taller one's root. Keeps trees shallow. Combined with compression, amortized cost is α(n) (inverse Ackermann) — essentially constant for any n you'd ever see.
 
 **Invariant:** `find(x)` is the unique representative of x's connected component. Two nodes are in the same component iff their finds match.
 
@@ -386,7 +386,7 @@ DSU is the right tool whenever you're streaming "merge these two groups" / "are 
 
 ### DSU class — path compression + union by rank
 
-Memorise this class. Every DSU problem reuses it verbatim. (In Python it's ~14 lines; Java is a touch longer but mechanically identical.)
+Memorize this class. Every DSU problem reuses it verbatim. (In Python it's ~14 lines; Java is a touch longer but mechanically identical.)
 
 ```java
 class DSU {
@@ -439,17 +439,17 @@ public int[] findRedundantConnection(int[][] edges) {
 
 ### Warm-up note
 
-DSU has no Easy LeetCode warm-up — the data structure itself is the lift. Memorise the class above cold BEFORE LC 684 / 547. If it doesn't flow out of your fingers, every DSU problem becomes a debugging session.
+DSU has no Easy LeetCode warm-up — the data structure itself is the lift. Memorize the class above cold BEFORE LC 684 / 547. If it doesn't flow out of your fingers, every DSU problem becomes a debugging session.
 
 ### Practice (solve in this order — each unlocks the next)
 
-| Step | # | Problem | Difficulty |
-|---|---|---|---|
-| 1 | 547 | Number of Provinces — simplest DSU; union connected pairs, count distinct finds | Medium |
-| 2 | 684 | Redundant Connection — detect the first edge that closes a cycle; iconic DSU | Medium |
-| 3 | 990 | Satisfiability of Equality Equations — union all `==`, then check any `!=`; two-pass | Medium |
-| 4 | 721 | Accounts Merge — DSU on emails; the messiest real-world DSU; Amazon bar-raiser | Medium |
-| 5 | 947 | Most Stones Removed — union stones sharing a row/col; answer = stones − components | Medium |
+| Step | # | Problem | Difficulty | Link |
+|---|---|---|---|---|
+| 1 | 547 | Number of Provinces — simplest DSU; union connected pairs, count distinct finds | Medium | [LeetCode](https://leetcode.com/problems/number-of-provinces/) |
+| 2 | 684 | Redundant Connection — detect the first edge that closes a cycle; iconic DSU | Medium | [LeetCode](https://leetcode.com/problems/redundant-connection/) |
+| 3 | 990 | Satisfiability of Equality Equations — union all `==`, then check any `!=`; two-pass | Medium | [LeetCode](https://leetcode.com/problems/satisfiability-of-equality-equations/) |
+| 4 | 721 | Accounts Merge — DSU on emails; the messiest real-world DSU; Amazon bar-raiser | Medium | [LeetCode](https://leetcode.com/problems/accounts-merge/) |
+| 5 | 947 | Most Stones Removed — union stones sharing a row/col; answer = stones − components | Medium | [LeetCode](https://leetcode.com/problems/most-stones-removed-with-same-row-or-column/) |
 
 ---
 
@@ -526,12 +526,12 @@ Dijkstra has no Easy LeetCode warm-up — it's Medium-floor. The honest warm-up:
 
 ### Practice (solve in this order — each unlocks the next)
 
-| Step | # | Problem | Difficulty |
-|---|---|---|---|
-| 1 | 743 | Network Delay Time — textbook Dijkstra; mandatory FAANG problem | Medium |
-| 2 | 1631 | Path with Minimum Effort — Dijkstra on a grid with max-edge-along-path cost | Medium |
-| 3 | 778 | Swim in Rising Water — Dijkstra OR binary-search + BFS; the bar-raiser version | Hard |
-| 4 | 1514 | Path with Maximum Probability — Dijkstra with multiply + max-heap (inverted relaxation) | Medium |
+| Step | # | Problem | Difficulty | Link |
+|---|---|---|---|---|
+| 1 | 743 | Network Delay Time — textbook Dijkstra; mandatory FAANG problem | Medium | [LeetCode](https://leetcode.com/problems/network-delay-time/) |
+| 2 | 1631 | Path with Minimum Effort — Dijkstra on a grid with max-edge-along-path cost | Medium | [LeetCode](https://leetcode.com/problems/path-with-minimum-effort/) |
+| 3 | 778 | Swim in Rising Water — Dijkstra OR binary-search + BFS; the bar-raiser version | Hard | [LeetCode](https://leetcode.com/problems/swim-in-rising-water/) |
+| 4 | 1514 | Path with Maximum Probability — Dijkstra with multiply + max-heap (inverted relaxation) | Medium | [LeetCode](https://leetcode.com/problems/path-with-maximum-probability/) |
 
 ---
 
@@ -605,7 +605,7 @@ public int[][] floydWarshall(int n, int[][] edges) {
 
 ### Common traps
 
-- **Floyd-Warshall with `k` NOT outermost.** Silently wrong — gives a non-optimal matrix. Memorise the order: `k`, then `i`, then `j`.
+- **Floyd-Warshall with `k` NOT outermost.** Silently wrong — gives a non-optimal matrix. Memorize the order: `k`, then `i`, then `j`.
 - **Bellman-Ford with V passes instead of V−1.** Not wrong, just wastes a round. The detection pass is the Vth.
 - **Overflow.** With a `MAX_VALUE` sentinel, `INF + w` wraps negative and corrupts the answer. Use `long` (Bellman-Ford) or a `1e9` sentinel (Floyd) and guard before adding.
 - **Reaching for Dijkstra when negative weights are present.** Always inspect the weight range first.
@@ -618,11 +618,11 @@ These have no Easy LeetCode warm-up — the framing is the lift. The honest warm
 
 ### Practice (solve in this order — each unlocks the next)
 
-| Step | # | Problem | Difficulty |
-|---|---|---|---|
-| 1 | 787 | Cheapest Flights Within K Stops — Bellman-Ford with K+1 rounds; canonical limited-edge | Medium |
-| 2 | 1334 | Find the City With the Smallest Number of Neighbors at a Threshold — textbook Floyd-Warshall | Medium |
-| 3 | 399 | Evaluate Division — Floyd-Warshall on ratios (multiply not add), or DFS; both work | Medium |
+| Step | # | Problem | Difficulty | Link |
+|---|---|---|---|---|
+| 1 | 787 | Cheapest Flights Within K Stops — Bellman-Ford with K+1 rounds; canonical limited-edge | Medium | [LeetCode](https://leetcode.com/problems/cheapest-flights-within-k-stops/) |
+| 2 | 1334 | Find the City With the Smallest Number of Neighbors at a Threshold — textbook Floyd-Warshall | Medium | [LeetCode](https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/) |
+| 3 | 399 | Evaluate Division — Floyd-Warshall on ratios (multiply not add), or DFS; both work | Medium | [LeetCode](https://leetcode.com/problems/evaluate-division/) |
 
 ---
 
@@ -678,7 +678,7 @@ public int minCostConnectPoints(int[][] points) {
 ### Common traps
 
 - **Not stopping early.** After V−1 successful unions you have the MST — the rest of the sorted edges are wasted work.
-- **Confusing MST with the shortest-path tree.** They are NOT the same. SPT minimises distance from a source; MST minimises total weight. They can be different trees.
+- **Confusing MST with the shortest-path tree.** They are NOT the same. SPT minimizes distance from a source; MST minimizes total weight. They can be different trees.
 - **Forgetting that an MST may not be unique.** Two edges with equal weight → there can be multiple valid MSTs with the same total cost.
 - **Disconnected graphs.** If the graph isn't connected there's no spanning tree — you'd build a minimum spanning FOREST instead. Detect it when `used < V − 1` after exhausting edges.
 
@@ -688,11 +688,11 @@ MST has no Easy LeetCode warm-up. The hardest part is owning the `DSU` class fro
 
 ### Practice (solve in this order — each unlocks the next)
 
-| Step | # | Problem | Difficulty |
-|---|---|---|---|
-| 1 | 1584 | Min Cost to Connect All Points — canonical MST; Kruskal on Manhattan-distance edges | Medium |
-| 2 | 1489 | Find Critical and Pseudo-Critical Edges in MST — Kruskal with one edge forced / forbidden | Hard |
-| 3 | 1579 | Remove Max Edges to Keep Graph Fully Traversable — dual-colour DSU; FAANG-grade variant | Hard |
+| Step | # | Problem | Difficulty | Link |
+|---|---|---|---|---|
+| 1 | 1584 | Min Cost to Connect All Points — canonical MST; Kruskal on Manhattan-distance edges | Medium | [LeetCode](https://leetcode.com/problems/min-cost-to-connect-all-points/) |
+| 2 | 1489 | Find Critical and Pseudo-Critical Edges in MST — Kruskal with one edge forced / forbidden | Hard | [LeetCode](https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/) |
+| 3 | 1579 | Remove Max Edges to Keep Graph Fully Traversable — dual-color DSU; FAANG-grade variant | Hard | [LeetCode](https://leetcode.com/problems/remove-max-number-of-edges-to-keep-graph-fully-traversable/) |
 
 Kruskal + DSU covers the entire MST surface. LC 1584 is the canonical warm-up; LC 1489 and LC 1579 are the FAANG-grade extensions. Premium MST variants (LC 1135 Connecting Cities, LC 1168 Optimize Water Distribution) reuse the same template.
 
@@ -700,7 +700,7 @@ Kruskal + DSU covers the entire MST surface. LC 1584 is the canonical warm-up; L
 
 ## Pattern 8 — Grid as graph (flood fill, multi-source BFS, boundary expansion)
 
-**One-liner:** A 2D grid IS a graph — every cell connects to its 4 (or 8) neighbours. Compute neighbours on the fly with direction deltas; never build an adjacency list.
+**One-liner:** A 2D grid IS a graph — every cell connects to its 4 (or 8) neighbors. Compute neighbors on the fly with direction deltas; never build an adjacency list.
 
 ### Mental model
 
@@ -710,7 +710,7 @@ Grid problems are graph problems with an implicit adjacency list. The DFS / BFS 
 
 **Boundary-expansion trick (LC 130, 417):** Instead of asking "which cells are TRAPPED?", ask "which cells reach the BORDER?" Start BFS / DFS from the border inward, mark survivors, flip the rest.
 
-**Bounds + visited check:** Two guards at the top of every recursive call — `if (r < 0 || r >= R || c < 0 || c >= C) return;` AND `if (visited[r][c] /* or wrong colour */) return;`. Both are needed.
+**Bounds + visited check:** Two guards at the top of every recursive call — `if (r < 0 || r >= R || c < 0 || c >= C) return;` AND `if (visited[r][c] /* or wrong color */) return;`. Both are needed.
 
 ### Spot signals
 
@@ -791,30 +791,30 @@ private void dfs(int[][] h, int r, int c, boolean[][] vis, int prev, int R, int 
 
 ### Warm-up first — build the mechanics
 
-Solve this cold before LC 1091. LC 463 has zero recursion / queue — just count exposed cell edges. It locks the "bounds check + neighbour delta" rhythm without any traversal on top.
+Solve this cold before LC 1091. LC 463 has zero recursion / queue — just count exposed cell edges. It locks the "bounds check + neighbor delta" rhythm without any traversal on top.
 
-| # | Problem | Difficulty |
-|---|---|---|
-| 463 | Island Perimeter — single pass counting exposed edges; pure direction-delta practice | Easy |
+| # | Problem | Difficulty | Link |
+|---|---|---|---|
+| 463 | Island Perimeter — single pass counting exposed edges; pure direction-delta practice | Easy | [LeetCode](https://leetcode.com/problems/island-perimeter/) |
 
 ### Practice (solve in this order — each unlocks the next)
 
-| Step | # | Problem | Difficulty |
-|---|---|---|---|
-| 1 | 79 | Word Search — DFS with backtracking on a grid; canonical mark / recurse / unmark | Medium |
-| 2 | 417 | Pacific Atlantic Water Flow — boundary-expansion trick; Google bar-raiser | Medium |
-| 3 | 1091 | Shortest Path in Binary Matrix — 8-directional BFS; mandatory FAANG grid problem | Medium |
-| 4 | 130 | Surrounded Regions — reverse flood fill from the border; reuses Pattern 1 muscle | Medium |
+| Step | # | Problem | Difficulty | Link |
+|---|---|---|---|---|
+| 1 | 79 | Word Search — DFS with backtracking on a grid; canonical mark / recurse / unmark | Medium | [LeetCode](https://leetcode.com/problems/word-search/) |
+| 2 | 417 | Pacific Atlantic Water Flow — boundary-expansion trick; Google bar-raiser | Medium | [LeetCode](https://leetcode.com/problems/pacific-atlantic-water-flow/) |
+| 3 | 1091 | Shortest Path in Binary Matrix — 8-directional BFS; mandatory FAANG grid problem | Medium | [LeetCode](https://leetcode.com/problems/shortest-path-in-binary-matrix/) |
+| 4 | 130 | Surrounded Regions — reverse flood fill from the border; reuses Pattern 1 muscle | Medium | [LeetCode](https://leetcode.com/problems/surrounded-regions/) |
 
 ---
 
 ## Pattern 9 — Bipartite check (2-coloring via BFS / DFS)
 
-**One-liner:** A graph is bipartite iff you can 2-color it so that no edge connects same-colored nodes. BFS / DFS while assigning alternating colors; a same-color neighbour means NOT bipartite.
+**One-liner:** A graph is bipartite iff you can 2-color it so that no edge connects same-colored nodes. BFS / DFS while assigning alternating colors; a same-color neighbor means NOT bipartite.
 
 ### Mental model
 
-Start any uncolored node, assign color 0, then BFS / DFS. Every neighbour gets the OPPOSITE color. If you ever try to color a neighbour and it already has the SAME color, the graph is not bipartite. Repeat for every component.
+Start any uncolored node, assign color 0, then BFS / DFS. Every neighbor gets the OPPOSITE color. If you ever try to color a neighbor and it already has the SAME color, the graph is not bipartite. Repeat for every component.
 
 **Why two colors suffice:** Bipartite = no odd-length cycles. If every cycle has even length, alternating colors closes consistently around it. An odd cycle forces a contradiction at the closing edge.
 
@@ -827,7 +827,7 @@ Start any uncolored node, assign color 0, then BFS / DFS. Every neighbour gets t
 - "Can the nodes be split into two groups so that every edge goes BETWEEN groups?"
 - "Possible bipartition" / "two teams" / "two halves" / "split into two sets"
 - "Is this graph 2-colorable / two-colorable?"
-- Anything that smells like "avoid same-side neighbours" or "no conflicts within a team".
+- Anything that smells like "avoid same-side neighbors" or "no conflicts within a team".
 
 ### Walkthrough — LC 785 Is Graph Bipartite (BFS 2-coloring)
 
@@ -862,7 +862,7 @@ public boolean isBipartite(int[][] graph) {
 ### Common traps
 
 - **Forgetting the outer for-loop over components.** LC 785's hidden tests always include a disconnected case.
-- **Only checking the FIRST neighbour relation.** Every edge needs the same-color check, including back-edges.
+- **Only checking the FIRST neighbor relation.** Every edge needs the same-color check, including back-edges.
 - **Using a single `boolean[] visited` instead of `int[] color`.** You need THREE states (uncolored / 0 / 1), not two.
 - **LC 886: the input is dislike PAIRS, not the adjacency list.** Build `adj` from the pairs FIRST, then run the same algorithm.
 - **Deep recursive DFS on N up to 10⁴.** Java can hit `StackOverflowError` on a long component. Prefer iterative BFS (as above) or a big-stack thread.
@@ -871,17 +871,17 @@ public boolean isBipartite(int[][] graph) {
 
 Solve LC 785 cold before moving on. It is THE canonical bipartite problem, and the BFS template above is reused unchanged on every other problem in this pattern.
 
-| # | Problem | Difficulty |
-|---|---|---|
-| 785 | Is Graph Bipartite? — canonical 2-coloring BFS; the template every other problem reuses | Medium |
+| # | Problem | Difficulty | Link |
+|---|---|---|---|
+| 785 | Is Graph Bipartite? — canonical 2-coloring BFS; the template every other problem reuses | Medium | [LeetCode](https://leetcode.com/problems/is-graph-bipartite/) |
 
 ### Practice (solve in this order — each unlocks the next)
 
-| Step | # | Problem | Difficulty |
-|---|---|---|---|
-| 1 | 886 | Possible Bipartition — same algorithm; the twist is building adj from dislike pairs first | Medium |
-| 2 | 1042 | Flower Planting With No Adjacent — relaxed 4-coloring; greedy smallest unused color | Medium |
-| 3 | 1129 | Shortest Path with Alternating Colors — bipartite-flavored BFS with color state in the queue | Medium |
+| Step | # | Problem | Difficulty | Link |
+|---|---|---|---|---|
+| 1 | 886 | Possible Bipartition — same algorithm; the twist is building adj from dislike pairs first | Medium | [LeetCode](https://leetcode.com/problems/possible-bipartition/) |
+| 2 | 1042 | Flower Planting With No Adjacent — relaxed 4-coloring; greedy smallest unused color | Medium | [LeetCode](https://leetcode.com/problems/flower-planting-with-no-adjacent/) |
+| 3 | 1129 | Shortest Path with Alternating Colors — bipartite-flavored BFS with color state in the queue | Medium | [LeetCode](https://leetcode.com/problems/shortest-path-with-alternating-colors/) |
 
 ---
 
@@ -890,16 +890,16 @@ Solve LC 785 cold before moving on. It is THE canonical bipartite problem, and t
 | Trap | Patterns at risk | How to dodge |
 |---|---|---|
 | Marking visited on dequeue (BFS) or after recursing (DFS) | 1, 2, 8 | Mark when you ENQUEUE / before you recurse. A node never enters the frontier twice. |
-| Single `boolean[] visited` for cycle detection in a directed graph | 1, 3 | Use 3-colour (WHITE/GRAY/BLACK) or an `onStack[]` flag. `visited[]` alone misses back-edges. |
+| Single `boolean[] visited` for cycle detection in a directed graph | 1, 3 | Use 3-color (WHITE/GRAY/BLACK) or an `onStack[]` flag. `visited[]` alone misses back-edges. |
 | Building the topo-sort graph in the wrong direction | 3 | Read the input twice. `[course, prereq]` means `prereq → course`. Test on a 3-node example. |
-| DSU without BOTH path compression AND union by rank | 4, 7 | Memorise the class. Both optimisations are mandatory for amortised O(1). |
+| DSU without BOTH path compression AND union by rank | 4, 7 | Memorize the class. Both optimizations are mandatory for amortized O(1). |
 | Running Dijkstra on a graph with negative weights | 5 | Check the weight range FIRST. Negative → Bellman-Ford. Non-negative → Dijkstra. |
-| Floyd-Warshall with `k` NOT in the outermost loop | 6 | Memorise: `for k → for i → for j`. That ordering is the correctness proof. |
+| Floyd-Warshall with `k` NOT in the outermost loop | 6 | Memorize: `for k → for i → for j`. That ordering is the correctness proof. |
 | Integer overflow when adding to an "infinity" sentinel | 5, 6 | Relax only from finite nodes, use `long`, or a `1e9` sentinel — never `MAX_VALUE` you add to. |
 | `(a,b) -> a[0]-b[0]` comparator overflow | 5, 7 | Use `Integer.compare(a[0], b[0])` for any heap/sort of large or signed values. |
-| Mixing up MST with the shortest-path tree | 5, 7 | MST minimises TOTAL weight; SPT minimises distance FROM A SOURCE. Different trees. |
+| Mixing up MST with the shortest-path tree | 5, 7 | MST minimizes TOTAL weight; SPT minimizes distance FROM A SOURCE. Different trees. |
 | Deep recursion blowing the JVM stack | 1, 3, 8, 9 | No `setrecursionlimit` in Java — `StackOverflowError`. Go iterative or use a big-stack thread. |
-| Grid: forgetting one of bounds / visited check | 8 | Two guards — out-of-bounds AND already-visited / wrong-colour. Both, every time, at the top. |
+| Grid: forgetting one of bounds / visited check | 8 | Two guards — out-of-bounds AND already-visited / wrong-color. Both, every time, at the top. |
 
 ---
 
@@ -924,7 +924,7 @@ If you fumble any of these → don't open new problems. Re-do the warm-up + cano
 | 1 | Pattern 1 (DFS) + Pattern 8 warm-up | 733, 200, 695, 841, 463 | Foundation day. By end of day, the DFS skeleton should flow without thinking. |
 | 2 | Pattern 2 (BFS) + finish Pattern 8 | 1971, 994, 102, 1091, 79 | Wave thinking + grid mastery. LC 79 (Word Search) backtracking deserves extra time. |
 | 3 | Pattern 3 (Topo Sort) | 207, 210, 802, 310 | All 4 in one day. Once you've done 207 + 210, the others are remixes. |
-| 4 | Pattern 4 (Union-Find) | 547, 684, 990, 721 | Memorise the DSU class cold first. LC 721 (Accounts Merge) is the messy real-world test. |
+| 4 | Pattern 4 (Union-Find) | 547, 684, 990, 721 | Memorize the DSU class cold first. LC 721 (Accounts Merge) is the messy real-world test. |
 | 5 | Pattern 5 (Dijkstra) | 743, 1631, 778, 1514 | Bar-raiser day. LC 778 deserves a re-solve next morning. LC 1514 swaps the relaxation sign. |
 | 6 | Pattern 6 (Bellman-Ford + Floyd) | 787, 1334, 399 | Conceptually heavy, light on code. Type Floyd-Warshall from memory before opening any problem. |
 | 7 | Pattern 7 (MST) + Pattern 9 (Bipartite) + revision | 1584, 1489, 130, 417, 785, 886 | MST = DSU + glue. Bipartite = BFS + alternating-color array. Then run the revision drill. |
@@ -935,9 +935,9 @@ If you fumble any of these → don't open new problems. Re-do the warm-up + cano
 
 ## The big idea
 
-Graph looks like 30 different algorithms. It's 9 patterns × 3-5 reps each. The people who clear FAANG don't memorise 30 algorithm names — they own 9 templates cold and recognise which fits in 10 seconds.
+Graph looks like 30 different algorithms. It's 9 patterns × 3-5 reps each. The people who clear FAANG don't memorize 30 algorithm names — they own 9 templates cold and recognize which fits in 10 seconds.
 
-Do the 36 must-do problems. Internalise the invariants. Then every future graph problem is just a remix.
+Do the 36 must-do problems. Internalize the invariants. Then every future graph problem is just a remix.
 
 **Java note:** This edition ships every template in idiomatic Java so there's nothing left to "translate in your head" mid-interview. The patterns travel — but the heap, the deque, the hash map, the overflow guards, and the recursion-depth fix are all Java-native here. Own these and you write them cold under pressure.
 
